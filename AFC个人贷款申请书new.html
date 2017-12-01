@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+section{
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.sectionTitle{
+    margin-bottom: 20px;
+}
+.container > div{
+    margin-right: 3%;
+    margin-bottom: 20px;
+    width: 30.333%;
+    float: left;
+}
+.key{
+    float: left;
+    display: block;
+    width: 104px;
+}
+.value{
+    float: left;
+    display: block;
+    width: 193px;
+    border-bottom: 1px #000 solid;
+}
+.container > div.full{
+    width: 100%;
+}
+.container > div.full .value{
+    width: 846px;
+}
+.signature>div{
+    float: left;
+    width: 50%;
+}
+.clear{
+    clear: both;
+}
+p{
+    margin: 30px 0;
+}
+h2{
+    margin-bottom: 30px;
+    font-size: 22px;
+    font-weight: 400;
+}
+li{
+    list-style: none;
+    margin: 10px 0;
+}
+</style>
+<body style="width: 980px;margin: 0;padding: 30px 50px;font-family:'微软雅黑',Arial;font-size: 12px;">
+    <h1 style="text-align: center;font-weight: 400;">个人客户金融贷款申请书-主申请人</h1>
+    <section>
+        <div class="sectionTitle">爱车详情</div>
+        <div class="container">
+            <div>
+                <span class="key">车型：</span>
+                <span class="value">{{AssetModelName}}</span>
+            </div>
+            <div>
+                <span class="key">月付：</span>
+                <span class="value">{{MonthlyPayment}}</span>
+            </div>
+            <div>
+                <span class="key">成交价：</span>
+                <span class="value">{{TransactionPrice}}</span>
+            </div>
+            <div>
+                <span class="key">首付：</span>
+                <span class="value">{{DownPayment}}</span>
+            </div>
+            <div>
+                <span class="key">贷款总额：</span>
+                <span class="value">{{FinancialAmount}}</span>
+            </div>
+            <div>
+                <span class="key">期数：</span>
+                <span class="value">{{Term}}</span>
+            </div>
+            <div>
+                <span class="key">利率：</span>
+                <span class="value">{{InterestRate}}</span>
+            </div>
+            <div>
+                <span class="key">尾款：</span>
+                <span class="value">{{RV}}</span>
+            </div>
+            <div>
+                <span class="key">经销商：</span>
+                <span class="value">{{DealerName}}</span>
+            </div>
+            <div>
+                <span class="key">车辆状况：</span>
+                <span class="value">{{AssetCondition}}</span>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="sectionTitle">个人信息</div>
+        <div class="container">
+            <div>
+                <span class="key">姓名：</span>
+                <span class="value">{{CustomerName}}</span>
+            </div>
+            <div>
+                <span class="key">手机号码：</span>
+                <span class="value">{{CustomerContactNumber1}}</span>
+            </div>
+            <div>
+                <span class="key">银行预留手机号：</span>
+                <span class="value">{{CustomerBankReservedContact}}</span>
+            </div>
+            <div>
+                <span class="key">证件类型：</span>
+                <span class="value">身份证</span>
+            </div>
+            <div>
+                <span class="key">证件号：</span>
+                <span class="value">{{CustomerIDCardNumber}}</span>
+            </div>
+            <div>
+                <span class="key">身份证有效期：</span>
+                <span class="value">{{CustomerIDCardExpireDate}}</span>
+            </div>
+            <div>
+                <span class="key">婚姻状况：</span>
+                <span class="value">{{CustomerMaritalStatus}}</span>
+            </div>
+            <div>
+                <span class="key">教育状况：</span>
+                <span class="value">{{CustomerEducation}}</span>
+            </div>
+            <div>
+                <span class="key">银行卡号：</span>
+                <span class="value">{{BankCardNumber}}</span>
+            </div>
+            <div>
+                <span class="key">居住日期：</span>
+                <span class="value">{{AddressLivingSince}}</span>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="sectionTitle">现住址信息</div>
+        <div class="container">
+            <div>
+                <span class="key">住址类型：</span>
+                <span class="value">{{AddressProperty}}</span>
+            </div>
+            <div>
+                <span class="key">自何时起居住：</span>
+                <span class="value">{{AddressLivingSince}}</span>
+            </div>
+            <div>
+                <span class="key">房屋面积：</span>
+                <span class="value">{{AddressSpace}}m<sup>2</sup></span>
+            </div>
+            <div class="full">
+                <span class="key">地址：</span>
+                <span class="value">{{AddressDetailAddress}}</span>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="sectionTitle">工作信息</div>
+        <div class="container">
+            <div>
+                <span class="key">公司：</span>
+                <span class="value">{{EmploymentName}}</span>
+            </div>
+            <div>
+                <span class="key">职位：</span>
+                <span class="value">{{EmploymentPosition}}</span>
+            </div>
+            <div>
+                <span class="key">工作时间：</span>
+                <span class="value">{{EmploymentWorkingSince}}</span>
+            </div>
+            <div class="full">
+                <span class="key">工作地址：</span>
+                <span class="value">{{EmploymentDetailAddress}}</span>
+            </div>
+            <div>
+                <span class="key">银行流水月收入：</span>
+                <span class="value">{{EmploymentBankStatementIncome}}</span>
+            </div>
+            <div>
+                <span class="key">税后收入总和：</span>
+                <span class="value">{{EmploymentMonthlySalary}}</span>
+            </div>
+        </div>
+    </section>
+    <h2>梅赛德斯-奔驰汽车金融有限公司零售信贷业务电子征信授权协议</h2>
+    <p><b>重要提示：</b></p>
+    <p><b>为了保障申请人的合法权益，请申请人务必审慎阅读、充分理解本协议的全部条款，特别是免除或减轻梅赛德斯-奔驰汽车金融有限公司（“贷款人”）的责任，或限制申请人权利的条款。</b></p>
+    <p>本征信授权协议双方为梅赛德斯-奔驰汽车金融有限公司（“贷款人”）与申请人，申请人在线申请贷款人零售信贷业务，贷款人需向中国人民银行征信中心金融信用信息基础数据库、其他依法设立的征信机构、其他有权机关建立的信息数据库查询、使用申请人的个人信息。根据《征信业管理条例》第18条规定“向征信机构查询个人信息的，应当取得信息主体本人的书面同意并约定用途”，以及《中华人民共和国合同法》第11条规定“书面形式不限于传统纸质形式，凡是能够有形地表现所载内容的电子形式也具有和纸质形式同等法律效力”，申请人同意如下事项：</p>
+    <p>一.&nbsp;&nbsp;&nbsp;申请人通过互联网（Internet）及移动终端点击勾选“申请人已阅读并同意《梅赛德斯-奔驰汽车金融有限公司零售信贷业务电子征信授权协议》”或能够表明申请人希望与贷款人签订本协议的按钮（例如按钮上书写“同意授权协议内容”或类似文字，且页面上同时列明了本协议的内容或者可以有效展示本协议内容的链接）或以其他合理方式表明申请人与贷款人订立了本协议，本协议即刻生效。同时表示申请人清楚知悉，并同意接受和遵守本协议的全部内容及法律责任。本协议在申请人接受贷款人提供金融产品、金融服务以及与贷款人开展其他业务期间持续有效，非经贷款人书面同意本协议不可撤销。</p>
+    <p>二.&nbsp;&nbsp;&nbsp;<b>申请人在此明确同意并不可撤销的授权：梅赛德斯-奔驰汽车金融有限公司（以下称“奔驰金融”）为审核本申请及风险管理在申请日期起到相关款项结清日期间（如申请未被批准，至申请被拒绝之日）根据国家法律法规的要求向金融信用信息基础数据库、中国人民银行个人信用信息基础数据库提供、报送申请人的信贷信息和信用信息; 并有权，或委托第三方，向金融信用信息基础数据库、中国人民银行个人信用信息基础数据库、征信机构及数据查询系统* 在法律法规允许的范围内以其认为适当的方式披露、查询、处理和使用申请人的个人信息（包括申请人姓名、地址、电子邮件、商业数据、信用信息、存款、有价证券、商业保险、不动产和纳税数额等，但不包括申请人年收入信息），进一步的，申请人同意并不可撤销的授权拥有申请人不良信息的信息提供者可以向依法成立的征信机构提供申请人的不良信息，且不再另行告知申请人；并同意该等征信机构在法律、行政法规许可的范围内，向第三方信息提供者核实或采集申请人信用信息并将该等信息进行整理、保存、加工以用于申请人的个人征信服务并向信息使用者提供。申请人知晓、充分理解并接受上述信息被提供、披露、查询、处理、采集和使用可能产生的不利后果，包括但不限于：虽采取了严格的符合国家认证标准的安全保护措施对所采集的上述信息实施了安全保护，但仍可能存在的因不可抗力或高科技本身所不可克服的漏洞或意外的恶意黑客攻击导致部分信息泄露的风险。</b></p>
+    <p><b>* 数据查询系统包括但不限于：北京百度网讯科技有限公司、中国银联股份有限公司等提供的数据信息。</b></p>
+    <p>三.&nbsp;&nbsp;&nbsp;<b>申请人在此授权奔驰金融（及其授权代理人）、梅赛德斯-奔驰租赁有限公司，戴姆勒大中华区投资有限公司，及其委托的第三方获取、保存、处理和使用上述信息。同时申请人授权奔驰金融（及其授权代理人）、梅赛德斯-奔驰租赁有限公司，戴姆勒大中华区投资有限公司，及其委托的第三方为审核本申请及风险管理的目的在全国公民身份信息系统、征信机构或其他授权的数据查询系统中在法律法规允许的范围内以其认为适当的方式披露、查询、收集或使用申请人信息，无论申请是否批准，均可就本申请的相关信息和事宜进行调查。申请人授权奔驰金融可将在征信机构查询获得的申请人的信息提供给梅赛德斯-奔驰租赁有限公司、戴姆勒大中华区投资有限公司，在奔驰金融与申请人的约定用途范围内使用。</b></p>
+    <p>四.&nbsp;&nbsp;&nbsp;申请人同意并自愿填写本申请书（包括但不限于收入、存款、有价证券、商业保险、不动产等信息）。申请人保证在本申请表和任何其他文件中提供的信息均是真实有效、准确和完整, 并了解和愿意承担因申请资料不真实或虚假、不准确、不完整所带来的一切后果和法律责任。如申请人提供的信息虚假或有误，奔驰金融及戴姆勒集团内的任何公司有权以申请人提供虚假信息或信息资料不全或不真实为由，随时宣布本申请的相关批复无效，终止相关协议，随时处分抵押物、要求申请人提前偿还本申请所涉及的相关款项或者对申请人提起法律诉讼等。</p>
+    <p>五.&nbsp;&nbsp;&nbsp;申请人声明无任何到期未清偿债务，并保证现在及今后具备财务能力偿还与本申请有关的全部债务，按时履行付款义务。否则，申请人将承担一切法律责任，且奔驰金融（及其授权代理人）及戴姆勒集团内的任何公司有权处分车辆及要求申请人付款和支付违约金。</p>
+    <p>六.&nbsp;&nbsp;&nbsp;申请人同意奔驰金融自申请日期起至合同存续期间或合同届满后保存和处理申请人的个人信息和所提交的文件。</p>
+    <p>七.&nbsp;&nbsp;&nbsp;申请人已知悉并理解上述授权和保证条款并且同时奔驰金融应严格遵守上述授权。如奔驰金融超出授权范围查询或使用申请人信息，奔驰金融将承担相应后果及法律责任。</p>
+    <p>八.&nbsp;&nbsp;&nbsp;<b>由于通过网路、手机提供和传输信息存在特定的泄密风险，申请人已经充分考虑到该风险，愿意承担该风险并使用贷款人的服务，如果因网络手机传输通讯故障、计算机病毒感染、黑客攻击窃取资料等贷款人无法控制的不可抗因素导致个人隐私泄密等后果，由申请人自行承担。</b></p>
+    <p>九.&nbsp;&nbsp;&nbsp;<b>申请人已经注意到有关免除或限制贷款人责任、贷款人单方拥有某些权利、增加申请人责任或限制申请人权利的条款，并对其有全面、准确的理解。申请人和贷款人对本协议条款的理解完全一致且完全接受。</b></p>
+    <p>十.&nbsp;&nbsp;&nbsp;贷款人与申请人在履行本协议中发生的争议，由双方协商解决，协商不成提起诉讼的，由贷款人所在地人民法院管辖。</p>
+    <p>十一.&nbsp;&nbsp;&nbsp;申请人应妥善保管下列信息、资料和硬件设备：</p>
+        <ul>
+            <li>（一）身份证、银行卡及其密码、CVV码、有效期等卡片信息；</li>
+            <li>（二）手机等移动终端及SIM卡等信息；</li>
+            <li>（三）注册用户名及其登录密码；</li>
+            <li>（四）指纹信息、虹膜信息、人脸信息、声纹信息等生物识别信息。</li>
+        </ul>
+    <p><b>申请人应妥善保管上述资料、信息和硬件设备，并确保申请人的手机等移动终端设备在安全、无病毒、未被入侵、未被监控、未被非法控制的环境下运行和使用。若申请人泄露了上述信息中的任意一项或遗失了上述硬件设备，由此导致的风险和损失应由申请人自行承担。</b></p>
+    <p>十二.&nbsp;&nbsp;&nbsp;<b>本协议的效力具有独立性，无论信贷业务是否获批，无论贷款合同是否签署或任何条款无效，申请人的信用报告等资料一律不退回本人。</b></p>
+    <p>十三.&nbsp;&nbsp;&nbsp;本协议未尽事宜，依据中华人民共和国大陆地区法律及金融惯例办理。</p>
+    <br>
+    <br>
+    <p>申请人已知悉并理解上述授权和保证条款并且同时贷款人应严格遵守上述授权。</p>
+    <br>
+    <br>
+    <br>
+    <div class="signature">
+        <div>甲方：</div>
+        <div>乙方：梅赛德斯-奔驰汽车金融有限公司</div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>    
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    </body>
+</html>

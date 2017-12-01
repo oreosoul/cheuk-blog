@@ -1,8 +1,9 @@
 <%- include header %>
-    <form>
-      <input type="text" placeholder="标题">
-      <textarea placeholder="正文"rows="3" cols="20">
-      </textarea>
-      <input type="submit">
-    </form>
+<form method="post">
+  标题：<br />
+  <input type="text" name="title" /><br />
+  正文：<br />
+  <textarea name="post" rows="20" cols="100"></textarea><br />
+  <input type="submit" value="发表" />
+</form>
 <%- include footer %>
