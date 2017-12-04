@@ -128,8 +128,12 @@ module.exports = function (app) {
         req.flash('success', '登出成功!');
         res.redirect('/');
     });
-
-
+    
+    //上传图片
+    app.post('/upload', checkLogin);
+    app.post('/upload', function (req, res) {
+      req.flash('success', '文件上传成功!');
+    });
 
     function checkLogin(req, res, next){
         if(!req.session.user){
@@ -146,5 +150,6 @@ module.exports = function (app) {
         }
         next()
     }
+
 
 };
