@@ -4,7 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var multer = require('multer')
+var multer = require('multer');
 var routes = require('./routes/index');
 
 var settings = require('./settings');
@@ -17,6 +17,13 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+app.use(multer({
+  dest: './public/images',
+  rename: function (fieldname, filename) {
+    return filename;
+  }
+}));
 
 app.use(session({
   secret: settings.cookieSecret,
@@ -42,12 +49,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(multer({
-  dest: './public/images',
-  rename: function (fieldname, filename) {
-    return filename;
-  }
-}));
+
 routes(app);
 
 // catch 404 and forward to error handler
