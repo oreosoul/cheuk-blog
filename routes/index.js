@@ -170,10 +170,10 @@ module.exports = function (app) {
         })
     })
     //获取文章页面
-    app.get('/u/:name/:day/:title', checkLogin);
-    app.get('/u/:name/:day/:title', function(req, res){
+    app.get('/u/:name/:minute/:title', checkLogin);
+    app.get('/u/:name/:minute/:title', function(req, res){
         //检查用户是否存在
-        Post.getOne(req.params.name, req.params.day, req.params.title, function(err, post){
+        Post.getOne(req.params.name, req.params.minute, req.params.title, function(err, post){
             if(err){
                 req.flash('error', err); 
                 return res.redirect('/');
@@ -185,6 +185,47 @@ module.exports = function (app) {
                 success: req.flash('success').toString(),
                 error: req.flash('error').toString()
             })
+        })
+    })
+
+    app.get('/edit/:name/:minute/:title', checkLogin)
+    app.get('/edit/:name/:minute/:title', function(req, res){
+        Post.edit(req.params.name, req.params.minute, req.params.title, function(err, post){
+            if(err){
+                req.flash('error', err)
+                return res.redirect('/')
+            }
+            res.render('edit', {
+                title: '编辑',
+                post: post,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            })
+        })
+    })
+    app.post('/edit/:name/:minute/:title', checkLogin)
+    app.post('/edit/:name/:minute/:title', function(req, res){
+        Post.update(req.params.name, req.params.minute, req.params.title, req.body.post, function(err){
+            let url = encodeURI('/u/' + req.params.name + '/' + req.params.minute + '/' + req.params.title);
+            if(err){
+                req.flash('error', err)
+                return res.redirect(url)
+            }
+            req.flash('success', '修改成功!');
+            res.redirect(url);//成功！返回文章页
+
+        })
+    })
+    app.get('/remove/:name/:minute/:title', checkLogin)
+    app.get('/remove/:name/:minute/:title', function(req, res){
+        Post.remove(req.params.name, req.params.minute, req.params.title, function(err){
+            if(err){
+                req.flash('error', err)
+                return res.redirect('back')
+            }
+            req.flash('success', '删除成功!')
+            res.redirect('/')
         })
     })
 

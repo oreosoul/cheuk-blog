@@ -86,7 +86,7 @@ Post.getAll = function(name, callback){
 }
 
 //获取一篇文章
-Post.getOne = function(name, day, title, callback){
+Post.getOne = function(name, minute, title, callback){
     //打开数据库
     mongodb.open(function(err, db){
         if(err){
@@ -101,7 +101,7 @@ Post.getOne = function(name, day, title, callback){
             //根据信息查询文章
             collection.findOne({
                 "name": name,
-                "time.day": day,
+                "time.minute": minute,
                 "title": title
             }, function(err, doc){
                 mongodb.close()
@@ -116,3 +116,80 @@ Post.getOne = function(name, day, title, callback){
         })
     })
 }
+
+//返回文章的markDown内容
+Post.edit = function(name, minute, title, callback){
+    //打开数据库
+    mongodb.open(function(err, db){
+        if(err){
+            return callback(err)
+        }
+        //读取POST集合
+        db.collection('post', function(err, collection){
+            if(err){
+                mongodb.close()
+                return callback(err)
+            }
+            //查找指定文章
+            collection.findOne({
+                "name": name,
+                "time.minute": minute,
+                "title": title
+            }, function(err, doc){
+                mongodb.close()
+                if(err){
+                    callback(err)
+                }
+                callback(null, doc);//返回查询的一篇文章（markdown 格式）
+            })
+        })
+    })
+}
+
+//更新文章相关信息
+Post.update = function(name, minute, title, post, callback){
+    //打开数据库
+    mongodb.open(function(err, db){
+        if(err) return callback(err)
+        db.collection('post', function(err, collection){
+            if(err){
+                mongodb.close()
+                return callback(err)
+            }
+            collection.updateOne({
+                "name": name,
+                "time.minute": minute,
+                "title": title
+            },{$set:{
+                "post": post
+            }}, function(err){
+                mongodb.close()
+                if(err) return callback(err)
+                return callback(null)
+            })
+        })
+    })
+}
+Post.remove = function(name, minute, title, callback){
+    mongodb.open((err, db)=>{
+        if(err) return callback(err)
+
+        db.collection('post', (err, collection)=>{
+            if(err) {
+                mongodb.close()
+                return callback(err)
+            }
+            collection.deleteOne({
+                "name": name,
+                "time.minute": minute,
+                "title": title
+            }, (err)=>{
+                mongodb.close()
+                if(err) return callback(err)
+                return callback(null)
+            })
+
+        })
+    })
+}
+
