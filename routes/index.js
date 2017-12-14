@@ -1,6 +1,8 @@
 var crypto = require('crypto'),
-    User = require('../models/user.js');
-    Post = require('../models/post')
+    User = require('../models/user'),
+    Post = require('../models/post'),
+    Comment = require('../models/comment')
+
 module.exports = function (app) {
     app.get('/', function (req, res) {
         Post.getAll (null, function(err, posts){
@@ -185,6 +187,28 @@ module.exports = function (app) {
                 success: req.flash('success').toString(),
                 error: req.flash('error').toString()
             })
+        })
+    })
+    app.post('/u/:name/:minute/:title', function(req,res){
+        //提交留言请求
+        let date = new Date(),
+            time = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + 
+                   date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
+        let comment = {
+            name: req.body.name,
+            email: req.body.email,
+            website: req.body.website || '',
+            time: time,
+            content: req.body.content
+        }
+        let newComment = new Comment(req.params.name, req.params.minute, req.params.title, comment)
+        newComment.save(function(err){
+            if(err){
+                res.flash('error', err)
+                res.redirect('back')
+            }
+            req.flash('success', '留言成功!')
+            res.redirect('back')
         })
     })
 
