@@ -91,6 +91,36 @@ article a:hover {
     color:#34352C;
     -webkit-transition:color .2s linear;
 }
-.prepage a{float:left;text-decoration:none;padding:.5em 1em;color:#34352C;font-weight:bold;}
-.nextpage a{float:right;text-decoration:none;padding:.5em 1em;color:#34352C;font-weight:bold;}
-.prepage a:hover,.nextpage a:hover{text-decoration:none;background-color:#34352C;color:#F5F6EB;-webkit-transition:color .2s linear;}
+.prepage a{
+    float:left;
+    text-decoration:none;
+    padding:.5em 1em;
+    color:#34352C;
+    font-weight:bold;
+}
+.nextpage a{
+    float:right;
+    text-decoration:none;
+    padding:.5em 1em;
+    color:#34352C;
+    font-weight:bold;}
+.prepage a:hover,.nextpage a:hover{
+    text-decoration:none;
+    background-color:#34352C;
+    color:#F5F6EB;
+    -webkit-transition:color .2s linear;
+}
+
+.archive{
+    list-style:none;
+    line-height:28px;
+}
+.archive h3{
+    margin:0.5em 0;
+}
+.archive time{
+    float:left;
+    font-size:14px;
+    color:#999999;
+    margin-right:1.2em;
+}
