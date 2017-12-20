@@ -1,0 +1,29 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+}
+button{
+    border: 0;
+    color: #C9CABB;
+    background: inherit;
+}
+#miner{
+    display: inline-block;
+    border-top: 1px solid #F5F6EB;
+    border-left: 1px solid #F5F6EB;
+    margin: 0 auto;
+}
+ul{
+    overflow: hidden;
+}
+li{
+    text-align: center;
+    display: block;
+    float: left;
+    width: 20px;
+    height: 20px;
+    border-bottom: 1px solid #F5F6EB;
+    border-right: 1px solid #F5F6EB;
+}
