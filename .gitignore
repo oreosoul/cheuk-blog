@@ -1,2 +1,4 @@
 node_modules
 .vscode
+access.log
+error.log

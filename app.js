@@ -12,7 +12,20 @@ var flash = require('connect-flash');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 
+var fs = require('fs');
+var accessLog = fs.createWriteStream('access.log', {flags: 'a'});
+var errorLog = fs.createWriteStream('error.log', {flags: 'a'});
+
 var app = express();
+
+//日志记录
+app.use(logger('dev'));
+app.use(logger({stream: accessLog}));
+app.use(function (err, req, res, next) {
+    var meta = '[' + new Date() + '] ' + req.url + '\n';
+    errorLog.write(meta + err.stack + '\n');
+    next();
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -52,6 +65,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 routes(app);
 
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   var err = new Error('Not Found');
@@ -59,7 +73,6 @@ app.use(function (req, res, next) {
   next(err);
 });
 // error handler
-
 app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
