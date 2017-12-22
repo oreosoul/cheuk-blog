@@ -1,8 +1,9 @@
 var mongodb = require('./db'),
-    markdown = require('markdown').markdown
+    markdown = require('markdown').markdown,
+    ObjectID = require('mongodb').ObjectID
 
-function Post(name, title, tags, post){
-    this.name = name
+function Post(author, title, tags, post){
+    this.author = author
     this.title = title
     this.tags = tags
     this.post = post
@@ -24,7 +25,7 @@ Post.prototype.save = function(callback){
 
     //需要插入collection的document
     var post = {
-        name: this.name,
+        author: this.author,
         time: time,
         title: this.title,
         tags: this.tags,
@@ -59,7 +60,7 @@ Post.prototype.save = function(callback){
 }
 
 //读取文章信息
-Post.getTen = function(name, page, callback){
+Post.getTen = function(author, page, callback){
     //打开数据库
     mongodb.open(function(err, db){
         if(err)return callback(err)
@@ -69,8 +70,8 @@ Post.getTen = function(name, page, callback){
                 return callback(err)
             }
             var query = {}
-            if(name){
-                query.name = name
+            if(author){
+                query.author = author
             }
             collection.count(query,function(err, total){
                 //根据 query 对象查询，并跳过前 (page-1)*10 个结果，返回之后的 10 个结果
@@ -96,7 +97,7 @@ Post.getTen = function(name, page, callback){
 }
 
 //获取一篇文章
-Post.getOne = function(name, minute, title, callback){
+Post.getOne = function(_id, callback){
     //打开数据库
     mongodb.open(function(err, db){
         if(err){
@@ -110,9 +111,7 @@ Post.getOne = function(name, minute, title, callback){
             }
             //根据信息查询文章
             collection.findOne({
-                "name": name,
-                "time.minute": minute,
-                "title": title
+                "_id": new ObjectID(_id)
             }, function(err, doc){
                 if(err){
                     mongodb.close()
@@ -121,9 +120,7 @@ Post.getOne = function(name, minute, title, callback){
                 if(doc){
                     //每访问一次，pv 值增加 1
                     collection.update({
-                        "name": name,
-                        "time.minute": minute,
-                        "title": title
+                        "_id": new ObjectID(_id)
                     },{
                         $inc: {"pv": 1}
                     }, function(err){
@@ -145,7 +142,7 @@ Post.getOne = function(name, minute, title, callback){
 }
 
 //返回文章的markDown内容
-Post.edit = function(name, minute, title, callback){
+Post.edit = function(author, minute, title, callback){
     //打开数据库
     mongodb.open(function(err, db){
         if(err){
@@ -159,7 +156,7 @@ Post.edit = function(name, minute, title, callback){
             }
             //查找指定文章
             collection.findOne({
-                "name": name,
+                "author": author,
                 "time.minute": minute,
                 "title": title
             }, function(err, doc){
@@ -174,7 +171,7 @@ Post.edit = function(name, minute, title, callback){
 }
 
 //更新文章相关信息
-Post.update = function(name, minute, title, post, callback){
+Post.update = function(author, minute, title, post, callback){
     //打开数据库
     mongodb.open(function(err, db){
         if(err) return callback(err)
@@ -184,7 +181,7 @@ Post.update = function(name, minute, title, post, callback){
                 return callback(err)
             }
             collection.updateOne({
-                "name": name,
+                "author": author,
                 "time.minute": minute,
                 "title": title
             },{$set:{
@@ -197,7 +194,7 @@ Post.update = function(name, minute, title, post, callback){
         })
     })
 }
-Post.remove = function(name, minute, title, callback){
+Post.remove = function(author, minute, title, callback){
     mongodb.open((err, db)=>{
         if(err) return callback(err)
 
@@ -207,7 +204,7 @@ Post.remove = function(name, minute, title, callback){
                 return callback(err)
             }
             collection.deleteOne({
-                "name": name,
+                "author": author,
                 "time.minute": minute,
                 "title": title
             }, (err)=>{
@@ -233,7 +230,7 @@ Post.getArchive = function(callback){
             }
 
             collection.find({}, {
-                "name": 1,
+                "author": 1,
                 "time": 1,
                 "title": 1
             }).sort({
@@ -280,7 +277,7 @@ Post.getTag = function(tag, callback){
             collection.find({
                 "tags": tag
             },{
-                "name": 1,
+                "author": 1,
                 "time": 1,
                 "title": 1
             }).sort({
@@ -309,7 +306,7 @@ Post.search = function(keyword, callback){
             collection.find({
                 "title": patten
             },{
-                "name": 1,
+                "author": 1,
                 "time": 1,
                 "title": 1
             }).sort({

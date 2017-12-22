@@ -92,15 +92,15 @@ module.exports = function (app) {
             password = md5.update(req.body.password).digest('hex')
         User.get(req.body.name, function(err, user){
             if (!user) {
-                req.flash('error', '用户不存在!'); 
-                return res.redirect('/login');
+                req.flash('error', '用户不存在!')
+                return res.redirect('/login')
             }
             if (user.password != password) {
-                req.flash('error', '密码错误!'); 
-                return res.redirect('/login');
+                req.flash('error', '密码错误!')
+                return res.redirect('/login')
             }
             req.session.user = user;
-            req.flash('success', '登陆成功!');
+            req.flash('success', '登陆成功!')
             res.redirect('/');
         })
     });
@@ -133,8 +133,8 @@ module.exports = function (app) {
     /* 注销请求 */
     app.get('/logout', function (req, res) {
         req.session.user = null;
-        req.flash('success', '登出成功!');
-        res.redirect('/');
+        req.flash('success', '登出成功!')
+        res.redirect('/')
     });
     
     //上传图片
@@ -145,13 +145,13 @@ module.exports = function (app) {
             user: req.session.user,
             success: req.flash('success').toString(),
             error: req.flash('error').toString()
-        });
-    });
+        })
+    })
     app.post('/upload', checkLogin);
     app.post('/upload', function (req, res) {
-      req.flash('success', '文件上传成功!');
-      res.redirect('/upload');
-    });
+      req.flash('success', '文件上传成功!')
+      res.redirect('/upload')
+    })
 
 
     app.get('/u/:name', checkLogin);
@@ -160,14 +160,14 @@ module.exports = function (app) {
         //检查用户是否存在
         User.get(req.params.name, function(err, user){
             if (!user) {
-                req.flash('error', '用户不存在!'); 
-                return res.redirect('/');//用户不存在跳回主页
+                req.flash('error', '用户不存在!')
+                return res.redirect('/') //用户不存在跳回主页
             }
             //查询并返回该用户的10篇文章
             Post.getTen(user.name, page, function(err, posts, total){
                 if (err) {
-                    req.flash('error', err); 
-                    return res.redirect('/');
+                    req.flash('error', err);
+                    return res.redirect('/')
                 }
                 res.render('user', {
                     title: user.name,
@@ -178,21 +178,21 @@ module.exports = function (app) {
                     user : req.session.user,
                     success : req.flash('success').toString(),
                     error : req.flash('error').toString()
-                });
+                })
             })
         })
     })
     //获取文章页面
-    app.get('/u/:name/:minute/:title', checkLogin);
-    app.get('/u/:name/:minute/:title', function(req, res){
+    app.get('/p/:_id', checkLogin);
+    app.get('/p/:_id', function(req, res){
         //检查用户是否存在
-        Post.getOne(req.params.name, req.params.minute, req.params.title, function(err, post){
+        Post.getOne(req.params._id, function(err, post){
             if(err){
                 req.flash('error', err); 
                 return res.redirect('/');
             }
             res.render('article', {
-                title: req.params.title,
+                title: post.title,
                 post: post,
                 user: req.session.user,
                 success: req.flash('success').toString(),
@@ -200,19 +200,19 @@ module.exports = function (app) {
             })
         })
     })
-    app.post('/u/:name/:minute/:title', function(req,res){
+    app.post('/u/:author/:minute/:title', function(req,res){
         //提交留言请求
         let date = new Date(),
             time = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + 
                    date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
         let comment = {
-            name: req.body.name,
+            author: req.body.author,
             email: req.body.email,
             website: req.body.website || '',
             time: time,
             content: req.body.content
         }
-        let newComment = new Comment(req.params.name, req.params.minute, req.params.title, comment)
+        let newComment = new Comment(req.params.author, req.params.minute, req.params.title, comment)
         newComment.save(function(err){
             if(err){
                 res.flash('error', err)
@@ -223,9 +223,9 @@ module.exports = function (app) {
         })
     })
 
-    app.get('/edit/:name/:minute/:title', checkLogin)
-    app.get('/edit/:name/:minute/:title', function(req, res){
-        Post.edit(req.params.name, req.params.minute, req.params.title, function(err, post){
+    app.get('/edit/:author/:minute/:title', checkLogin)
+    app.get('/edit/:author/:minute/:title', function(req, res){
+        Post.edit(req.params.author, req.params.minute, req.params.title, function(err, post){
             if(err){
                 req.flash('error', err)
                 return res.redirect('/')
@@ -239,10 +239,10 @@ module.exports = function (app) {
             })
         })
     })
-    app.post('/edit/:name/:minute/:title', checkLogin)
-    app.post('/edit/:name/:minute/:title', function(req, res){
-        Post.update(req.params.name, req.params.minute, req.params.title, req.body.post, function(err){
-            let url = encodeURI('/u/' + req.params.name + '/' + req.params.minute + '/' + req.params.title);
+    app.post('/edit/:author/:minute/:title', checkLogin)
+    app.post('/edit/:author/:minute/:title', function(req, res){
+        Post.update(req.params.author, req.params.minute, req.params.title, req.body.post, function(err){
+            let url = encodeURI('/u/' + req.params.author + '/' + req.params.minute + '/' + req.params.title);
             if(err){
                 req.flash('error', err)
                 return res.redirect(url)
@@ -252,9 +252,9 @@ module.exports = function (app) {
 
         })
     })
-    app.get('/remove/:name/:minute/:title', checkLogin)
-    app.get('/remove/:name/:minute/:title', function(req, res){
-        Post.remove(req.params.name, req.params.minute, req.params.title, function(err){
+    app.get('/remove/:author/:minute/:title', checkLogin)
+    app.get('/remove/:author/:minute/:title', function(req, res){
+        Post.remove(req.params.author, req.params.minute, req.params.title, function(err){
             if(err){
                 req.flash('error', err)
                 return res.redirect('back')

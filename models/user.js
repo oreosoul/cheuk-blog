@@ -1,10 +1,11 @@
-var mongodb = require('./db');
+var mongodb = require('./db'),
+    ObjectID = require('mongodb').ObjectID
 
 /* User 构造函数 */
 function User(user) {
-  this.name = user.name;
-  this.password = user.password;
-  this.email = user.email;
+    this.name = user.name
+    this.password = user.password
+    this.email = user.email
 };
 
 //存储用户信息
@@ -54,7 +55,7 @@ User.get = function(name, callback){
                 mongodb.close()
                 return callback(err)
             }
-            collection.findOne({name: name},function(err, user){
+            collection.findOne({"name": name},function(err, user){
                 mongodb.close()
                 if(err){
                     return callback(err)
