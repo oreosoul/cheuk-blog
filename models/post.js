@@ -1,6 +1,7 @@
 var mongodb = require('./db'),
     markdown = require('markdown').markdown,
-    ObjectID = require('mongodb').ObjectID
+    ObjectID = require('mongodb').ObjectID,
+    async = require('async')
 
 function Post(author, title, tags, post){
     this.author = author
@@ -34,246 +35,261 @@ Post.prototype.save = function(callback){
         pv: 0
     }
 
-    //打开数据库
-    mongodb.open(function(err, db){
-        if(err){
-            return callback(err)
-        }
-        //读取集合
-        db.collection('post', function(err, collection){
-            if(err){
-                mongodb.close()
-                return callback(err)
-            }
-            //将文档插入post集合
-            collection.insert(post, {
-                safe: true
-            }, function(err){
-                mongodb.close()
-                if(err){
-                    return callback(err)
-                }
-                callback(null)
+    async.waterfall([
+        function(cb){
+            mongodb.open(function(err, db){
+                cb(err, db)
             })
-        })
+        },
+        function(db, cb){
+            db.collection('post', function(err, collection){
+                cb(err, collection)
+            })
+        },
+        function(collection, cb){
+            collection.insert(post, {safe: true}, function(err){
+                cb(err)
+            })
+        }
+    ], function(err, result){
+        mongodb.close()
+        callback(err, result)
     })
 }
 
 //读取文章信息
 Post.getTen = function(author, page, callback){
-    //打开数据库
-    mongodb.open(function(err, db){
-        if(err)return callback(err)
-        db.collection('post', function(err, collection){
-            if(err){
-                mongodb.close()
-                return callback(err)
-            }
-            var query = {}
+    async.waterfall([
+        function(cb){
+            mongodb.open(function(err, db){
+                cb(err, db)
+            })
+        },
+        function(db, cb){
+            db.collection('post', function(err, collection){
+                cb(err, collection)
+            })
+        },
+        function(collection, cb){
+            let query = {}
             if(author){
                 query.author = author
             }
-            collection.count(query,function(err, total){
-                //根据 query 对象查询，并跳过前 (page-1)*10 个结果，返回之后的 10 个结果
-                collection.find(query)
-                .skip((page-1)*10)
-                .limit(10)
-                .sort({
-                    time: -1
-                }).toArray(function(err, docs){
-                    mongodb.close()
-                    if(err){
-                        return callback(err)
-                    }
-                    docs.forEach(function (doc) {
-                        doc.post = doc.post?doc.post:''
-                        doc.post = markdown.toHTML(doc.post);
-                    });
-                    callback(null, docs, total)
-                })
+            collection.count(query, function(err, total){
+                cb(err, collection, total, query)
             })
-        })
+        },
+        function(collection, total, query, cb){
+            collection.find(query)
+            .skip((page-1)*10)
+            .limit(10)
+            .sort({
+                time: -1
+            }).toArray(function(err, docs){
+                docs.forEach(function (doc) {
+                    doc.post = doc.post?doc.post:''
+                    doc.post = markdown.toHTML(doc.post);
+                });
+                cb(err, docs, total)
+            })
+        },
+    ],function(err, ...result){
+        mongodb.close()
+        callback(err, result[0], result[1])
     })
 }
 
 //获取一篇文章
 Post.getOne = function(_id, callback){
-    //打开数据库
-    mongodb.open(function(err, db){
-        if(err){
-            return callback(err)
-        }
-        //读取 posts 集合
-        db.collection('post', function(err, collection){
-            if(err){
-                mongodb.close()
-                return callback(err)
-            }
-            //根据信息查询文章
+    async.waterfall([
+        function(cb){
+            mongodb.open(function(err, db){
+                cb(err, db)
+            })
+        },
+        function(db, cb){
+            db.collection('post', function(err, collection){
+                cb(err, collection)
+            })
+        },
+        function(collection, cb){
             collection.findOne({
                 "_id": new ObjectID(_id)
             }, function(err, doc){
-                if(err){
-                    mongodb.close()
-                    return callback(err)
-                }
-                if(doc){
-                    //每访问一次，pv 值增加 1
-                    collection.update({
-                        "_id": new ObjectID(_id)
-                    },{
-                        $inc: {"pv": 1}
-                    }, function(err){
-                        mongodb.close()
-                        if(err) return callback(err)
-                    })
-                    //解析 markdown 为 html
-                    doc.post = doc.post?doc.post:''
-                    doc.post = markdown.toHTML(doc.post);
-                    doc.comments.forEach(function(comment){
-                        comment.content = markdown.toHTML(comment.content);
-                    })
-                }
-                callback(null, doc)
+                cb(err, doc, collection)
             })
-
-        })
+        },
+        function(doc, collection, cb){
+            if(doc){
+                //解析 markdown 为 html
+                doc.post = doc.post?doc.post:''
+                doc.post = markdown.toHTML(doc.post);
+                doc.comments.forEach(function(comment){
+                    comment.content = markdown.toHTML(comment.content);
+                })
+                //每访问一次，pv 值增加 1
+                collection.update({
+                    "_id": new ObjectID(_id)
+                },{
+                    $inc: {"pv": 1}
+                }, function(err){
+                    cb(err, doc)
+                })
+            }
+        }
+    ],function(err, result){
+        mongodb.close()
+        callback(err, result)
     })
 }
 
 //返回文章的markDown内容
-Post.edit = function(author, minute, title, callback){
+Post.edit = function(_id, callback){
     //打开数据库
-    mongodb.open(function(err, db){
-        if(err){
-            return callback(err)
-        }
-        //读取POST集合
-        db.collection('post', function(err, collection){
-            if(err){
-                mongodb.close()
-                return callback(err)
-            }
-            //查找指定文章
-            collection.findOne({
-                "author": author,
-                "time.minute": minute,
-                "title": title
-            }, function(err, doc){
-                mongodb.close()
-                if(err){
-                    callback(err)
-                }
-                callback(null, doc);//返回查询的一篇文章（markdown 格式）
+    async.waterfall([
+        function(cb){
+            mongodb.open(function(err, db){
+                cb(err, db)
             })
-        })
+        },
+        function(db, cb){
+            db.collection('post', function(err, collection){
+                cb(err, collection)
+            })
+        },
+        function(collection, cb){
+            collection.findOne({
+                "_id": new ObjectID(_id)
+            }, function(err, doc){
+                cb(err, doc)
+            })
+        }
+    ],function(err, post){
+        mongodb.close()
+        callback(err, post)
     })
 }
 
 //更新文章相关信息
-Post.update = function(author, minute, title, post, callback){
-    //打开数据库
-    mongodb.open(function(err, db){
-        if(err) return callback(err)
-        db.collection('post', function(err, collection){
-            if(err){
-                mongodb.close()
-                return callback(err)
-            }
+Post.update = function(_id, post, callback){
+    async.waterfall([
+        function(cb){
+            mongodb.open(function(err, db){
+                cb(err, db)
+            })
+        },
+        function(db, cb){
+            db.collection('post', function(err, collection){
+                cb(err, collection)
+            })
+        },
+        function(collection, cb){
             collection.updateOne({
-                "author": author,
-                "time.minute": minute,
-                "title": title
-            },{$set:{
+                "_id": new ObjectID(_id)
+            }, {$set:{
                 "post": post
             }}, function(err){
-                mongodb.close()
-                if(err) return callback(err)
-                return callback(null)
+                cb(err)
             })
-        })
+        }
+    ],function(err, result){
+        mongodb.close()
+        callback(err, result)
     })
 }
-Post.remove = function(author, minute, title, callback){
-    mongodb.open((err, db)=>{
-        if(err) return callback(err)
-
-        db.collection('post', (err, collection)=>{
-            if(err) {
-                mongodb.close()
-                return callback(err)
-            }
-            collection.deleteOne({
-                "author": author,
-                "time.minute": minute,
-                "title": title
-            }, (err)=>{
-                mongodb.close()
-                if(err) return callback(err)
-                return callback(null)
+Post.remove = function(_id, callback){
+    async.waterfall([
+        function(cb){
+            mongodb.open(function(err, db){
+                cb(err, db)
             })
-
-        })
+        },
+        function(db, cb){
+            db.collection('post', function(err, collection){
+                cb(err, collection)
+            })
+        },
+        function(collection, cb){
+            collection.deleteOne({
+                "_id": new ObjectID(_id)
+            }, function(err, doc){
+                cb(err, doc)
+            })
+        }
+    ],function(err, post){
+        mongodb.close()
+        callback(err, post)
     })
 }
 
 //获取全部文章存档
 Post.getArchive = function(callback){
     //返回文章存档信息
-    mongodb.open(function(err, db){
-        if(err) return callback(err)
-
-        db.collection('post', function(err, collection){
-            if(err){
-                mongodb.close()
-                return callback(err)
-            }
-
-            collection.find({}, {
+    async.waterfall([
+        function(cb){
+            mongodb.open(function(err, db){
+                cb(err, db)
+            })
+        },
+        function(db, cb){
+            db.collection('post', function(err, collection){
+                cb(err, collection)
+            })
+        },
+        function(collection, cb){
+            collection.find({},{
                 "author": 1,
                 "time": 1,
                 "title": 1
             }).sort({
                 time: -1
             }).toArray(function(err, docs){
-                mongodb.close()
-                if(err) return callback(err)
-                
-                callback(null, docs)
+                cb(err, docs)
             })
-        })
+        }
+    ],function(err, posts){
+        mongodb.close()
+        callback(err, posts)
     })
 }
 
 //获取全部标签
 Post.getTags = function(callback){
-    mongodb.open(function(err, db){
-        if(err) return callback(err)
-
-        db.collection('post', function(err, collection){
-            if(err){
-                mongodb.close()
-                return callback(err)
-            }
-            collection.distinct('tags', function(err, docs){
-                mongodb.close()
-                if(err) return callback(err)
-
-                callback(null, docs)
+    async.waterfall([
+        function(cb){
+            mongodb.open(function(err, db){
+                cb(err, db)
             })
-        })
+        },
+        function(db, cb){
+            db.collection('post', function(err, collection){
+                cb(err, collection)
+            })
+        },
+        function(collection, cb){
+            collection.distinct('tags', function(err, docs){
+                cb(err, docs)
+            })
+        }
+    ], function(err, tags){
+        mongodb.close()
+        callback(err, tags)
     })
 }
 
 Post.getTag = function(tag, callback){
-    mongodb.open(function(err, db){
-        if(err) return callback(err)
-
-        db.collection('post', function(err, collection){
-            if(err){
-                mongodb.close()
-                return callback(err)
-            }
+    async.waterfall([
+        function(cb){
+            mongodb.open(function(err, db){
+                cb(err, db)
+            })
+        },
+        function(db, cb){
+            db.collection('post', function(err, collection){
+                cb(err, collection)
+            })
+        },
+        function(collection, cb){
             collection.find({
                 "tags": tag
             },{
@@ -282,26 +298,29 @@ Post.getTag = function(tag, callback){
                 "title": 1
             }).sort({
                 "time": -1
-            }).toArray(function (err, docs) {
-                mongodb.close();
-                if (err) {
-                    return callback(err);
-                }
-                callback(null, docs);
+            }).toArray(function(err, docs){
+                cb(err, docs)
             })
-        })
+        }
+    ], function(err, posts){
+        mongodb.close()
+        callback(err, posts)
     })
 }
 
 Post.search = function(keyword, callback){
-    mongodb.open(function(err, db){
-        if(err) return callback(err)
-
-        db.collection('post', function(err, collection){
-            if(err){
-                mongodb.close()
-                return callback(err)
-            }
+    async.waterfall([
+        function(cb){
+            mongodb.open(function(err, db){
+                cb(err, db)
+            })
+        },
+        function(db, cb){
+            db.collection('post', function(err, collection){
+                cb(err, collection)
+            })
+        },
+        function(collection, cb){
             let patten = new RegExp(keyword, "i")
             collection.find({
                 "title": patten
@@ -310,13 +329,13 @@ Post.search = function(keyword, callback){
                 "time": 1,
                 "title": 1
             }).sort({
-                time: -1
+                "time": -1
             }).toArray(function(err, docs){
-                mongodb.close()
-                if(err) return callback(err)
-
-                callback(null, docs)
+                cb(err, docs)
             })
-        })
+        }
+    ], function(err, posts){
+        mongodb.close()
+        callback(err, posts)
     })
 }

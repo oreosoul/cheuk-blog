@@ -200,19 +200,19 @@ module.exports = function (app) {
             })
         })
     })
-    app.post('/u/:author/:minute/:title', function(req,res){
+    app.post('/p/:_id', function(req,res){
         //提交留言请求
         let date = new Date(),
             time = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + 
                    date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
         let comment = {
-            author: req.body.author,
+            name: req.body.name,
             email: req.body.email,
             website: req.body.website || '',
             time: time,
             content: req.body.content
         }
-        let newComment = new Comment(req.params.author, req.params.minute, req.params.title, comment)
+        let newComment = new Comment(req.params._id, comment)
         newComment.save(function(err){
             if(err){
                 res.flash('error', err)
@@ -223,9 +223,9 @@ module.exports = function (app) {
         })
     })
 
-    app.get('/edit/:author/:minute/:title', checkLogin)
-    app.get('/edit/:author/:minute/:title', function(req, res){
-        Post.edit(req.params.author, req.params.minute, req.params.title, function(err, post){
+    app.get('/edit/:_id', checkLogin)
+    app.get('/edit/:_id', function(req, res){
+        Post.edit(req.params._id, function(err, post){
             if(err){
                 req.flash('error', err)
                 return res.redirect('/')
@@ -239,10 +239,10 @@ module.exports = function (app) {
             })
         })
     })
-    app.post('/edit/:author/:minute/:title', checkLogin)
-    app.post('/edit/:author/:minute/:title', function(req, res){
-        Post.update(req.params.author, req.params.minute, req.params.title, req.body.post, function(err){
-            let url = encodeURI('/u/' + req.params.author + '/' + req.params.minute + '/' + req.params.title);
+    app.post('/edit/:_id', checkLogin)
+    app.post('/edit/:_id', function(req, res){
+        Post.update(req.params._id, req.body.post, function(err){
+            let url = encodeURI('/p/' + req.params._id);
             if(err){
                 req.flash('error', err)
                 return res.redirect(url)
@@ -252,9 +252,9 @@ module.exports = function (app) {
 
         })
     })
-    app.get('/remove/:author/:minute/:title', checkLogin)
-    app.get('/remove/:author/:minute/:title', function(req, res){
-        Post.remove(req.params.author, req.params.minute, req.params.title, function(err){
+    app.get('/remove/:_id', checkLogin)
+    app.get('/remove/:_id', function(req, res){
+        Post.remove(req.params._id, function(err){
             if(err){
                 req.flash('error', err)
                 return res.redirect('back')
