@@ -20,7 +20,7 @@ var app = express();
 
 //日志记录
 app.use(logger('dev'));
-app.use(logger({stream: accessLog}));
+app.use(logger("combined", {stream: accessLog}));
 app.use(function (err, req, res, next) {
     var meta = '[' + new Date() + '] ' + req.url + '\n';
     errorLog.write(meta + err.stack + '\n');
