@@ -1,18 +1,28 @@
 var mongodb = require('./db'),
     markdown = require('markdown').markdown,
     ObjectID = require('mongodb').ObjectID,
-    async = require('async')
+    async = require('async'),
+    mongoose = require('mongoose')
 
-function Post(author, title, tags, post){
-    this.author = author
-    this.title = title
-    this.tags = tags
-    this.post = post
-}
+const postSchema = new mongoose.Schema({
+    author: String,
+    time: {},
+    title: String,
+    tags: Array,
+    post: String,
+    pv: Number
+},{
+    collection: 'post'
+})
 
-module.exports = Post
+// function Post(author, title, tags, post){
+//     this.author = author
+//     this.title = title
+//     this.tags = tags
+//     this.post = post
+// }
 
-Post.prototype.save = function(callback){
+postSchema.methods.savePost = function(callback){
     var date = new Date()
     //存储各种时间格式，方便扩展
     var time = {
@@ -23,65 +33,28 @@ Post.prototype.save = function(callback){
         minute : date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + 
         date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) 
     }
-
     //需要插入collection的document
-    var post = {
-        author: this.author,
-        time: time,
-        title: this.title,
-        tags: this.tags,
-        post: this.post,
-        comments: [],
-        pv: 0
-    }
+    this.time = time
+    this.save(function(err){
+        if(err) return callback(err)
 
-    async.waterfall([
-        function(cb){
-            mongodb.open(function(err, db){
-                cb(err, db)
-            })
-        },
-        function(db, cb){
-            db.collection('post', function(err, collection){
-                cb(err, collection)
-            })
-        },
-        function(collection, cb){
-            collection.insert(post, {safe: true}, function(err){
-                cb(err)
-            })
-        }
-    ], function(err, result){
-        mongodb.close()
-        callback(err, result)
+        return callback(null)
     })
 }
 
 //读取文章信息
-Post.getTen = function(author, page, callback){
+postSchema.statics.getTen = function(author, page, callback){
     async.waterfall([
         function(cb){
-            mongodb.open(function(err, db){
-                cb(err, db)
-            })
-        },
-        function(db, cb){
-            db.collection('post', function(err, collection){
-                cb(err, collection)
-            })
-        },
-        function(collection, cb){
-            let query = {}
             if(author){
                 query.author = author
             }
-            collection.count(query, function(err, total){
-                cb(err, collection, total, query)
+            this.count(query,function(err, total){
+                cb(err, total, query)
             })
         },
-        function(collection, total, query, cb){
-            collection.find(query)
-            .skip((page-1)*10)
+        function(total, query, cb){
+            this.find(query).skip((page-1)*10)
             .limit(10)
             .sort({
                 time: -1
@@ -92,15 +65,15 @@ Post.getTen = function(author, page, callback){
                 });
                 cb(err, docs, total)
             })
-        },
-    ],function(err, ...result){
+        }
+    ], function(err, docs, total){
         mongodb.close()
-        callback(err, result[0], result[1])
+        callback(err, docs, total)
     })
 }
 
 //获取一篇文章
-Post.getOne = function(_id, callback){
+postSchema.statics.getOne = function(_id, callback){
     async.waterfall([
         function(cb){
             mongodb.open(function(err, db){
@@ -124,9 +97,6 @@ Post.getOne = function(_id, callback){
                 //解析 markdown 为 html
                 doc.post = doc.post?doc.post:''
                 doc.post = markdown.toHTML(doc.post);
-                doc.comments.forEach(function(comment){
-                    comment.content = markdown.toHTML(comment.content);
-                })
                 //每访问一次，pv 值增加 1
                 collection.update({
                     "_id": new ObjectID(_id)
@@ -144,7 +114,7 @@ Post.getOne = function(_id, callback){
 }
 
 //返回文章的markDown内容
-Post.edit = function(_id, callback){
+postSchema.statics.edit = function(_id, callback){
     //打开数据库
     async.waterfall([
         function(cb){
@@ -171,7 +141,7 @@ Post.edit = function(_id, callback){
 }
 
 //更新文章相关信息
-Post.update = function(_id, post, callback){
+postSchema.statics.update = function(_id, post, callback){
     async.waterfall([
         function(cb){
             mongodb.open(function(err, db){
@@ -197,7 +167,7 @@ Post.update = function(_id, post, callback){
         callback(err, result)
     })
 }
-Post.remove = function(_id, callback){
+postSchema.statics.remove = function(_id, callback){
     async.waterfall([
         function(cb){
             mongodb.open(function(err, db){
@@ -223,7 +193,7 @@ Post.remove = function(_id, callback){
 }
 
 //获取全部文章存档
-Post.getArchive = function(callback){
+postSchema.statics.getArchive = function(callback){
     //返回文章存档信息
     async.waterfall([
         function(cb){
@@ -254,7 +224,7 @@ Post.getArchive = function(callback){
 }
 
 //获取全部标签
-Post.getTags = function(callback){
+postSchema.statics.getTags = function(callback){
     async.waterfall([
         function(cb){
             mongodb.open(function(err, db){
@@ -277,7 +247,7 @@ Post.getTags = function(callback){
     })
 }
 
-Post.getTag = function(tag, callback){
+postSchema.statics.getTag = function(tag, callback){
     async.waterfall([
         function(cb){
             mongodb.open(function(err, db){
@@ -308,7 +278,7 @@ Post.getTag = function(tag, callback){
     })
 }
 
-Post.search = function(keyword, callback){
+postSchema.statics.search = function(keyword, callback){
     async.waterfall([
         function(cb){
             mongodb.open(function(err, db){
@@ -339,3 +309,7 @@ Post.search = function(keyword, callback){
         callback(err, posts)
     })
 }
+
+let Post = new mongoose.model('Post', postSchema)
+
+module.exports = Post

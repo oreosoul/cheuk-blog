@@ -1,7 +1,19 @@
 var crypto = require('crypto'),
     User = require('../models/user'),
     Post = require('../models/post'),
-    Comment = require('../models/comment')
+    Comment = require('../models/comment'),
+    mongoose = require('mongoose')
+
+var Promise = mongoose.connect('mongodb://localhost/blog', {
+    useMongoClient: true
+    /* other options */
+    })
+var db = mongoose.connection
+
+db.on('error', console.error.bind(console, '连接错误:'))
+db.once('open', function() {
+    console.log('连接成功')
+})
 
 module.exports = function (app) {
     app.get('/', function (req, res) {
@@ -52,7 +64,7 @@ module.exports = function (app) {
             name: name,
             password: password,
             email: req.body.email
-        });
+        })
         //检查用户名是否存在
         User.get(newUser.name, function(err, user){
             if(err){
@@ -64,7 +76,7 @@ module.exports = function (app) {
                 return res.redirect('/reg')
             }
             //如果不存在
-            newUser.save(function(err, user){
+            newUser.register(function(err, user){
                 if(err){
                     req.flash('error', err)
                     return res.redirect('reg')
@@ -119,8 +131,15 @@ module.exports = function (app) {
     app.post('/post', function (req, res) {
         var currentUser = req.session.user,
             tags = [req.body.tag1, req.body.tag2, req.body.tag3],
-            post = new Post(currentUser.name, req.body.title, tags, req.body.post)
-        post.save(function(err){
+            post = new Post({
+                author: currentUser.name,
+                title: req.body.title,
+                tags: tags, 
+                post: req.body.post,
+                pv: 0,
+                time: {}
+            })
+        post.savePost(function(err){
             if(err){
                 req.flash('error', err)
                 return res.redirect('/')
@@ -198,28 +217,6 @@ module.exports = function (app) {
                 success: req.flash('success').toString(),
                 error: req.flash('error').toString()
             })
-        })
-    })
-    app.post('/p/:_id', function(req,res){
-        //提交留言请求
-        let date = new Date(),
-            time = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + 
-                   date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes())
-        let comment = {
-            name: req.body.name,
-            email: req.body.email,
-            website: req.body.website || '',
-            time: time,
-            content: req.body.content
-        }
-        let newComment = new Comment(req.params._id, comment)
-        newComment.save(function(err){
-            if(err){
-                res.flash('error', err)
-                res.redirect('back')
-            }
-            req.flash('success', '留言成功!')
-            res.redirect('back')
         })
     })
 
