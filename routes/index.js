@@ -131,7 +131,7 @@ module.exports = function (app) {
     app.post('/post', function (req, res) {
         var currentUser = req.session.user,
             tags = [req.body.tag1, req.body.tag2, req.body.tag3],
-            post = new Post({
+            newPost = new Post({
                 author: currentUser.name,
                 title: req.body.title,
                 tags: tags, 
@@ -139,7 +139,7 @@ module.exports = function (app) {
                 pv: 0,
                 time: {}
             })
-        post.savePost(function(err){
+            newPost.savePost(function(err){
             if(err){
                 req.flash('error', err)
                 return res.redirect('/')
@@ -296,7 +296,7 @@ module.exports = function (app) {
     })
     //获取指定标签页面
     app.get('/tags/:tag',function(req, res){
-        Post.getTag(req.params.tag, function(err, posts){
+        Post.getPostsByTag(req.params.tag, function(err, posts){
             if(err){
                 req.flash('error', err)
                 return res.redirect('/')
