@@ -202,7 +202,7 @@ module.exports = function (app) {
         })
     })
     //获取文章页面
-    app.get('/p/:_id', checkLogin);
+    // app.get('/p/:_id', checkLogin);
     app.get('/p/:_id', function(req, res){
         //检查用户是否存在
         Post.getOne(req.params._id, function(err, post){
