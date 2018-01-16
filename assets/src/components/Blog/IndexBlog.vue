@@ -1,5 +1,5 @@
 <template>
-<div>Blog</div>
+<div>it`sBlog</div>
 </template>
 <script>
 export default {
