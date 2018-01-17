@@ -3,34 +3,18 @@
   <h1>Blog</h1>
   <section class="list-container">
     <ul>
-      <li class="article-item">
+      <li v-for="article in articleList" :key="article.id" :class="['article-item', {'have-img': article.image}]" >
         <div class="content">
-          <a href="" class="title">2017 | 这一年，我按了两万次快门</a>
-          <p>2017年已经接近尾声，心血来潮想给自己做一个2017年总结，这一年，我有四段难忘的旅行经历；这一年，我在学校办了两个摄影展；这一年，我拍了两万张照片~ 为了做这个旅行摄影总...</p>
+          <a href="" class="title">{{article.title}}</a>
+          <p>{{article.post}}</p>
           <div class="wrap-tags">
-            <span class="time">时间：2018/1/17</span>
+            <span class="time">时间：{{article.time}}</span>
             <span class="tags">标签：
-              <a href="">测试1</a>
-              <a href="">测试2</a>
-              <a href="">测试3</a>
+              <a href="" v-for="tag in article.tags" :key="tag">{{tag}}</a>
             </span>
           </div>
         </div>
-      </li>
-      <li class="article-item have-img">
-        <div class="content">
-          <a href="" class="title">2017 | 这一年，我按了两万次快门</a>
-          <p>2017年已经接近尾声，心血来潮想给自己做一个2017年总结，这一年，我有四段难忘的旅行经历；这一年，我在学校办了两个摄影展；这一年，我拍了两万张照片~ 为了做这个旅行摄影总...</p>
-          <div class="wrap-tags">
-            <span class="time">时间：2018/1/17</span>
-            <span class="tags">标签：
-              <a href="">测试1</a>
-              <a href="">测试2</a>
-              <a href="">测试3</a>
-            </span>
-          </div>
-        </div>
-        <a href="" class="wrap-img">
+        <a v-if="article.image" href="" class="wrap-img">
           <img src="../../assets/img/article-img.jpg"/>
         </a>
       </li>
@@ -45,11 +29,25 @@ export default {
   name: 'Blog',
   data () {
     return {
-      articleList: []
+      articleList: [{
+        id: 0,
+        title: '2017 | 这一年，我按了两万次快门',
+        post: '2017年已经接近尾声，心血来潮想给自己做一个2017年总结，这一年，我有四段难忘的旅行经历；这一年，我在学校办了两个摄影展；这一年，我拍了两万张照片~ 为了做这个旅行摄影总...',
+        time: '2018/1/17',
+        tags: ['测试1', '测试2', '测试3'],
+        image: ''
+      }, {
+        id: 1,
+        title: '2017 | 这一年，我按了两万次快门',
+        post: '2017年已经接近尾声，心血来潮想给自己做一个2017年总结，这一年，我有四段难忘的旅行经历；这一年，我在学校办了两个摄影展；这一年，我拍了两万张照片~ 为了做这个旅行摄影总...',
+        time: '2018/1/17',
+        tags: ['2017', '游记'],
+        image: '@/assets/img/article-img.jpg'
+      }]
     }
   },
   mounted () {
-    API.getTenPost().then(response => {
+    API.getPostList().then(response => {
       console.log('success')
     }).catch(err => {
       console.error(err)
