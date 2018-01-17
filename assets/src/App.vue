@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
@@ -18,7 +18,17 @@ export default {
   padding: 0;
 }
 html {
+  background: #f4f4f4;
   font-size: 12px;
+  height: 100%;
+}
+body {
+  background: #f4f4f4;
+  height: 100%;
+}
+#app {
+  background: inherit;
+  height: 100%;
 }
 ul {
   list-style: none;

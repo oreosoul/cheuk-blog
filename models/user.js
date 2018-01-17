@@ -7,7 +7,7 @@ const userSchema  = new mongoose.Schema({
     password: String,
     email: String
 },{
-    collection: 'user'
+    collection: 'users'
 })
 
 //存储用户信息

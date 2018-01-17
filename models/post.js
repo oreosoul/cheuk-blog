@@ -62,7 +62,7 @@ postSchema.statics.getTen = function(author, page, callback){
             }, (err, docs) => {
                 docs.forEach((doc) => {
                     doc.post = doc.post?doc.post:''
-                    doc.post = markdown.toHTML(doc.post);
+                    doc.post = markdown.toHTML(doc.post)
                 });
                 cb(err, docs, total)
             })
@@ -77,6 +77,8 @@ postSchema.statics.getOne = function(_id, callback){
     this.findByIdAndUpdate(new ObjectID(_id), {
         $inc: {"pv": 1}
     }, (err, doc) => {
+        doc.post = doc.post?doc.post:''
+        doc.post = markdown.toHTML(doc.post)
         callback(err, doc)
     })
 }
