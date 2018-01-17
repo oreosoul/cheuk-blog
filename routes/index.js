@@ -16,6 +16,13 @@ db.once('open', function() {
 })
 
 module.exports = function (app) {
+    app.all('*', function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*")
+        res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS")
+        res.header("Content-Type", "application/json;charset=utf-8")
+        next();
+    });
+
     app.get('/', function (req, res) {
         //判断是否第一页，并把请求的页数转换成 number 类型
         let page = req.query.p ? parseInt(req.query.p) : 1

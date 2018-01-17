@@ -48,7 +48,7 @@ export default {
   },
   mounted () {
     API.getPostList().then(response => {
-      console.log('success')
+      console.log(response)
     }).catch(err => {
       console.error(err)
     })
