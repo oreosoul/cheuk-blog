@@ -22,7 +22,7 @@ module.exports = function (app) {
         res.header("Access-Control-Allow-Headers","content-type")
         next();
     });
-    app.post('/', function(req, res){
+    app.post('/Post/getPostList', function(req, res){
         Post.getPostList (req.body.limit, req.body.page, function(err, posts, total){
             let articleList = []
             if(err){
@@ -37,7 +37,7 @@ module.exports = function (app) {
                     imageStr = post.post.match(/<img.*?\/>/)
                 if(imageStr) imageStr = imageStr[0].replace('src="', 'src="//localhost:3000')
                 return {
-                    id: post._id,
+                    _id: post._id,
                     title: post.title,
                     post: postPreViewStr,
                     time: post.time.minute,
@@ -45,7 +45,6 @@ module.exports = function (app) {
                     image: imageStr
                 }
             })
-            articleList
             res.send({
                 code: 200,
                 data: {
@@ -56,6 +55,27 @@ module.exports = function (app) {
             })
         })
     })
+    app.get('/Post/getPostById/:_id', function(req, res){
+        Post.getOne(req.params._id, function(err, post){
+            if(err){
+                res.send({
+                    code: 400,
+                    data: null,
+                    msg: `Get article list fail: ${err}.`
+                })
+            }
+            res.send({
+                code: 200,
+                data: post,
+                msg: 'Get article success.'
+            })
+        })
+    })
+
+
+
+
+
     app.get('/', function (req, res) {
         //判断是否第一页，并把请求的页数转换成 number 类型
         let page = req.query.p ? parseInt(req.query.p) : 1

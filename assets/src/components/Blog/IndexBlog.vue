@@ -5,7 +5,7 @@
     <ul>
       <li v-for="article in articleList" :key="article.id" :class="['article-item', {'have-img': article.image}]" >
         <div class="content">
-          <a href="" class="title">{{article.title}}</a>
+          <router-link :to="'/blog/'+article._id" class="title">{{article.title}}</router-link>
           <p>{{article.post}}</p>
           <div class="wrap-tags">
             <span class="time">时间：{{article.time}}</span>
@@ -14,9 +14,9 @@
             </span>
           </div>
         </div>
-        <a v-if="article.image" href="" class="wrap-img">
+        <router-link v-if="article.image" :to="'/blog/'+article._id" class="wrap-img">
           <img :alt="article.image.alt" :src="article.image.src"/>
-        </a>
+        </router-link>
       </li>
     </ul>
   </section>
@@ -33,30 +33,32 @@ export default {
     }
   },
   mounted () {
-    API.getPostList().then(response => {
-      if (response.data.code === 200) {
-        let parser = new DOMParser()
-        response.data.data.articleList.forEach(function (item) {
-          console.log(item)
-          item.post = parser.parseFromString(item.post, 'text/xml').firstChild.innerHTML
-          item.image = item.image === null ? null : {
-            alt: parser.parseFromString(item.image, 'text/xml').firstChild.attributes.alt.value,
-            src: parser.parseFromString(item.image, 'text/xml').firstChild.attributes.src.value
-          }
-        })
-        this.articleList = response.data.data.articleList
-      } else {
-        console.error(response.data.data.msg)
-      }
-      console.log(response)
-    }).catch(err => {
-      console.error(err)
-    })
+    this.getPostList()
   },
   components: {
     test: require('../Common/AppMenu')
   },
   methods: {
+    getPostList () {
+      API.getPostList().then(response => {
+        if (response.data.code === 200) {
+          let parser = new DOMParser()
+          response.data.data.articleList.forEach(function (item) {
+            console.log(item)
+            item.post = parser.parseFromString(item.post, 'text/xml').firstChild.innerHTML
+            item.image = item.image === null ? null : {
+              alt: parser.parseFromString(item.image, 'text/xml').firstChild.attributes.alt.value,
+              src: parser.parseFromString(item.image, 'text/xml').firstChild.attributes.src.value
+            }
+          })
+          this.articleList = response.data.data.articleList
+        } else {
+          console.error(response.data.data.msg)
+        }
+      }).catch(err => {
+        console.error(err)
+      })
+    }
   }
 }
 </script>
