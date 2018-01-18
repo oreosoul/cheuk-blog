@@ -41,7 +41,31 @@ postSchema.methods.savePost = function(callback){
         return callback(null)
     })
 }
-
+postSchema.statics.getPostList = function(limit, page, callback){
+    let query = {}
+    async.waterfall([
+        (cb) => {
+            this.count(query,function(err, total){
+                cb(err, total, query)
+            })
+        },
+        (total, query, cb) => {
+            this.find(query, null , {
+                skip: (page-1)*limit,
+                limit: limit,
+                sort: {time: -1}
+            }, (err, docs) => {
+                docs.forEach((doc) => {
+                    doc.post = doc.post?doc.post:''
+                    doc.post = markdown.toHTML(doc.post)
+                });
+                cb(err, docs, total)
+            })
+        }
+    ], function(err, docs, total){
+        callback(err, docs, total)
+    })
+}
 //读取文章信息
 postSchema.statics.getTen = function(author, page, callback){
     let query = {}

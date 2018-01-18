@@ -15,7 +15,7 @@
           </div>
         </div>
         <a v-if="article.image" href="" class="wrap-img">
-          <img src="../../assets/img/article-img.jpg"/>
+          <img :alt="article.image.alt" :src="article.image.src"/>
         </a>
       </li>
     </ul>
@@ -29,25 +29,25 @@ export default {
   name: 'Blog',
   data () {
     return {
-      articleList: [{
-        id: 0,
-        title: '2017 | 这一年，我按了两万次快门',
-        post: '2017年已经接近尾声，心血来潮想给自己做一个2017年总结，这一年，我有四段难忘的旅行经历；这一年，我在学校办了两个摄影展；这一年，我拍了两万张照片~ 为了做这个旅行摄影总...',
-        time: '2018/1/17',
-        tags: ['测试1', '测试2', '测试3'],
-        image: ''
-      }, {
-        id: 1,
-        title: '2017 | 这一年，我按了两万次快门',
-        post: '2017年已经接近尾声，心血来潮想给自己做一个2017年总结，这一年，我有四段难忘的旅行经历；这一年，我在学校办了两个摄影展；这一年，我拍了两万张照片~ 为了做这个旅行摄影总...',
-        time: '2018/1/17',
-        tags: ['2017', '游记'],
-        image: '@/assets/img/article-img.jpg'
-      }]
+      articleList: []
     }
   },
   mounted () {
     API.getPostList().then(response => {
+      if (response.data.code === 200) {
+        let parser = new DOMParser()
+        response.data.data.articleList.forEach(function (item) {
+          console.log(item)
+          item.post = parser.parseFromString(item.post, 'text/xml').firstChild.innerHTML
+          item.image = item.image === null ? null : {
+            alt: parser.parseFromString(item.image, 'text/xml').firstChild.attributes.alt.value,
+            src: parser.parseFromString(item.image, 'text/xml').firstChild.attributes.src.value
+          }
+        })
+        this.articleList = response.data.data.articleList
+      } else {
+        console.error(response.data.data.msg)
+      }
       console.log(response)
     }).catch(err => {
       console.error(err)
@@ -55,6 +55,8 @@ export default {
   },
   components: {
     test: require('../Common/AppMenu')
+  },
+  methods: {
   }
 }
 </script>
