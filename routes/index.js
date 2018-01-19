@@ -55,8 +55,8 @@ module.exports = function (app) {
             })
         })
     })
-    app.get('/Post/getPostById/:_id', function(req, res){
-        Post.getOne(req.params._id, function(err, post){
+    app.get('/Post/getPostById', function(req, res){
+        Post.getOne(req.query._id, function(err, post){
             if(err){
                 res.send({
                     code: 400,
@@ -66,7 +66,7 @@ module.exports = function (app) {
             }
             res.send({
                 code: 200,
-                data: post,
+                data: {article: post},
                 msg: 'Get article success.'
             })
         })

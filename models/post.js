@@ -101,9 +101,8 @@ postSchema.statics.getOne = function(_id, callback){
     this.findByIdAndUpdate(new ObjectID(_id), {
         $inc: {"pv": 1}
     }, (err, doc) => {
-        console.log(err)
         doc.post = doc.post?doc.post:''
-        doc.post = markdown.toHTML(doc.post)
+        // doc.post = markdown.toHTML(doc.post)
         callback(err, doc)
     })
 }

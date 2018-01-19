@@ -1,25 +1,48 @@
 <template>
-  <div>
-    <h1></h1>
+  <div class="side-container">
+    <h1>{{article.title}}</h1>
+    <div class="wrap-tags">
+      <span class="time">时间：{{article.time.minute}}</span>
+      <span class="tags">标签：
+        <a href="" v-for="tag in article.tags" :key="tag">{{tag}}</a>
+      </span>
+    </div>
+    <section class="article-container" v-html="articleHTML"></section>
+    <disqus></disqus>
   </div>
 </template>
 <script>
+import { markdown } from 'markdown'
 import Api from '../../api/API'
 const API = new Api()
 export default {
   name: 'Article',
+  components: {
+    'disqus': require('../Common/Disqus')
+  },
   data () {
     return {
       article: {
         _id: '',
         title: '',
         post: '',
-        time: null,
+        time: {
+          date: null,
+          year: '',
+          month: '',
+          day: '',
+          minute: ''
+        },
         tags: [],
         author: '',
         pv: 0
 
       }
+    }
+  },
+  computed: {
+    articleHTML () {
+      return markdown.toHTML(this.article.post)
     }
   },
   mounted () {
@@ -43,9 +66,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h1 {
-  margin-bottom: 17px;
-  padding-bottom: 17px;
-  border-bottom: 1px solid #dddddd;
+.article-container {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  line-height: 1.9rem;
+}
+.wrap-tags {
+  margin-bottom: 1rem;
 }
 </style>

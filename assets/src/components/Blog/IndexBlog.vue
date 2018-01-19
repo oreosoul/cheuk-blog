@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="side-container">
   <h1>Blog</h1>
   <section class="list-container">
     <ul>
@@ -44,7 +44,6 @@ export default {
         if (response.data.code === 200) {
           let parser = new DOMParser()
           response.data.data.articleList.forEach(function (item) {
-            console.log(item)
             item.post = parser.parseFromString(item.post, 'text/xml').firstChild.innerHTML
             item.image = item.image === null ? null : {
               alt: parser.parseFromString(item.image, 'text/xml').firstChild.attributes.alt.value,
@@ -63,14 +62,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-h1 {
-  margin-bottom: 17px;
-  padding-bottom: 17px;
-  border-bottom: 1px solid #dddddd;
-}
-a:hover {
-  text-decoration: underline;
-}
 .article-item {
   position: relative;
   margin-bottom: 17px;
@@ -104,12 +95,6 @@ a:hover {
       width: 100%;
       height: 100%;
       border-radius: 6px;
-    }
-  }
-  .wrap-tags {
-    font-size: 1rem;
-    span{
-      margin-right: 10px;
     }
   }
 }

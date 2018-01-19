@@ -1,0 +1,51 @@
+* {
+  font-family: 'Microsoft Yahei', Verdana, Arial;
+  color: #2a2a2a;
+  margin: 0;
+  padding: 0;
+}
+html {
+  background: #f4f4f4;
+  font-size: 12px;
+  height: 100%;
+}
+body {
+  background: #f4f4f4;
+  height: 100%;
+}
+p {
+    margin-bottom: 1rem;
+}
+ul {
+  list-style: none;
+}
+a {
+  text-decoration: none
+}
+a:hover {
+  text-decoration: underline;
+}
+
+.side-container {
+  h1 {
+    margin-bottom: 17px;
+    padding-bottom: 17px;
+    border-bottom: 1px solid #dddddd;
+  }
+}
+.article-container img {
+  display: block;
+  margin: 0 auto;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  width: 68%;
+}
+.wrap-tags {
+  font-size: 1rem;
+  span{
+    margin-right: 10px;
+  }
+  a {
+    margin-right: 6px;
+  }
+}
