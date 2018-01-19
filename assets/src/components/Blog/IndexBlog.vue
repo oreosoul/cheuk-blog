@@ -62,6 +62,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+a:hover {
+  text-decoration: underline;
+}
 .article-item {
   position: relative;
   margin-bottom: 17px;

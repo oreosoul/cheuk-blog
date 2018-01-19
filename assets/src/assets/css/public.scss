@@ -22,9 +22,6 @@ ul {
 a {
   text-decoration: none
 }
-a:hover {
-  text-decoration: underline;
-}
 
 .side-container {
   h1 {
@@ -33,12 +30,14 @@ a:hover {
     border-bottom: 1px solid #dddddd;
   }
 }
-.article-container img {
-  display: block;
-  margin: 0 auto;
-  border: 1px solid #dddddd;
-  border-radius: 5px;
-  width: 68%;
+.article-container {
+  img{
+    display: block;
+    margin: 0 auto;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    max-height: 250px;
+  }
 }
 .wrap-tags {
   font-size: 1rem;
