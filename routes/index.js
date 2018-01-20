@@ -5,7 +5,6 @@ var crypto = require('crypto'),
     mongoose = require('mongoose')
 
 var Promise = mongoose.connect('mongodb://localhost/blog', {
-    useMongoClient: true
     /* other options */
     })
 var db = mongoose.connection

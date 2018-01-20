@@ -20,7 +20,7 @@
     "mongodb": "^2.2.33",
     "mongoose": "*",
     "morgan": "~1.9.0",
-    "multer": "0.1.6",
+    "multer": "^0.1.6",
     "serve-favicon": "~2.4.5"
   }
 }
