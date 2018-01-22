@@ -72,6 +72,31 @@ module.exports = function (app) {
         })
     })
 
+    app.post('Admin/login', checkNotLogin)
+    app.post('Admin/login', function (req, res) {
+        var md5 = crypto.createHash('md5'),
+            password = md5.update(req.body.password).digest('hex')
+        User.get(req.body.name, function(err, user){
+            let code = 200,
+                data = null,
+                msg = '登录成功'
+            if (!user) {
+                code = 401
+                msg = '用户不存在!'
+            }
+            if (user.password != password) {
+                code = 400
+                msg = '密码错误!'
+            }
+            req.session.user = user;
+            res.send({
+                code,
+                data,
+                msg
+            })
+        })
+    })
+
 
 
 
