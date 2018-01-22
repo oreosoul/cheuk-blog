@@ -5,6 +5,7 @@ var crypto = require('crypto'),
     mongoose = require('mongoose')
 
 var Promise = mongoose.connect('mongodb://localhost/blog', {
+    useMongoClient: true
     /* other options */
     })
 var db = mongoose.connection
@@ -32,7 +33,7 @@ module.exports = function (app) {
                 })
             }
             articleList = posts.map(post => {
-                let postPreViewStr =  post.post.match(/<p>[^<img].*?<\/p>/)[0],
+                let postPreViewStr = post.post.match(/<.+>[^<img].*?<\/.+>/)[0],
                     imageStr = post.post.match(/<img.*?\/>/)
                 if(imageStr) imageStr = imageStr[0]/* .replace('src="', 'src="//localhost:3000') */
                 return {

@@ -3,7 +3,14 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import mavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
+
 require('./assets/css/public.scss')
+require('github-markdown-css/github-markdown.css')
+
+// use
+Vue.use(mavonEditor)
 
 Vue.config.productionTip = false
 

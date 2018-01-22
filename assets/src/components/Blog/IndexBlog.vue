@@ -1,6 +1,6 @@
 <template>
 <div class="side-container">
-  <h1>Blog</h1>
+  <h1 class="article-title">Blog</h1>
   <section class="list-container">
     <ul>
       <li v-for="article in articleList" :key="article.id" :class="['article-item', {'have-img': article.image}]" >
@@ -10,7 +10,7 @@
           <div class="wrap-tags">
             <span class="time">时间：{{article.time}}</span>
             <span class="tags">标签：
-              <a href="" v-for="tag in article.tags" :key="tag">{{tag}}</a>
+              <a href="" v-for="tag in article.tags" :key="tag.index">{{tag}}</a>
             </span>
           </div>
         </div>

@@ -1,13 +1,13 @@
 <template>
   <div class="side-container">
-    <h1>{{article.title}}</h1>
+    <h1 class="article-title">{{article.title}}</h1>
     <div class="wrap-tags">
       <span class="time">时间：{{article.time.minute}}</span>
       <span class="tags">标签：
-        <a href="" v-for="tag in article.tags" :key="tag">{{tag}}</a>
+        <a href="" v-for="tag in article.tags" :key="tag.index">{{tag}}</a>
       </span>
     </div>
-    <section class="article-container" v-html="articleHTML"></section>
+    <section class="article-container markdown-body" v-html="articleHTML"></section>
     <disqus></disqus>
   </div>
 </template>
@@ -70,6 +70,7 @@ export default {
   font-size: 1.25rem;
   margin-bottom: 1rem;
   line-height: 1.9rem;
+  padding: 0 1rem;
 }
 .wrap-tags {
   margin-bottom: 1rem;
