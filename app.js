@@ -12,6 +12,7 @@ var flash = require('connect-flash');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 
+var oauthserver = require('oauth2-server');
 var fs = require('fs');
 var accessLog = fs.createWriteStream('access.log', {flags: 'a'});
 var errorLog = fs.createWriteStream('error.log', {flags: 'a'});
@@ -58,13 +59,12 @@ app.use(flash());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-    extended: false
+    extended: true
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 routes(app);
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

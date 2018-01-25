@@ -38,6 +38,8 @@
 
 <script>
 import Cookies from 'js-cookie';
+import Api from '../api/API'
+const API = new Api()
 export default {
     data () {
         return {
@@ -59,10 +61,16 @@ export default {
         handleSubmit () {
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {
-                    Cookies.set('user', this.form.userName);
-                    this.$router.push({
-                        name: 'home_index'
-                    });
+                    API.adminLogin(this.form.userName, this.form.password).then(response => {
+                        if(response.data.code === 200){
+                            Cookies.set('user', this.form.userName);
+                            this.$router.push({
+                                name: 'home_index'
+                            });
+                        }
+                    }).catch(err => {
+
+                    })
                 }
             });
         }
